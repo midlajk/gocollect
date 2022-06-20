@@ -5,20 +5,26 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Addowner from './Screens/addowner';
 import Addbus from './Screens/addbus';
-import Tabs from './Screens/navigation/tab';
-import AddCategory from './Screens/addcategory';
-import AddCollector from './Screens/addcollector';
-import Collection from './Screens/Collection';
+import Home from './Screens/home';
+import Admin from './Screens/admin';
+
+import Tyrecol_tab from './Screens/navigation/tyrecol_tab';
+import TaxCollection from './Screens/Tax_collection';
+import Settings from './Screens/Settings';
+import Standfee from './Screens/Stand_fee';
+import Tempororyfee from './Screens/temperoryfee';
+import Tyrecollection from './Screens/Tyre_collection';
+// import profile from './Screens/profile';
 import Splash from './Screens/Splash';
 import RegisterScreen from './Screens/register';
 import Entityselections from './Screens/entityselection';
 import Submit from './Screens/submit';
 import Entitycollection from './Screens/entitycollection';
-import EntityTotal from './Screens/collectionfrombus';
-function HomeTabs() {
+import OwnerCollection from './Screens/ownercollections';
+function TyreTabs() {
   return (
    
-      <Tabs  />
+      <Tyrecol_tab  />
 
   );
 }
@@ -40,12 +46,7 @@ function App() {
             }}
           />
          
-          <RootStack.Screen
-             options={{headerShown: false}}
-            name="Home Tabs"
-            component={HomeTabs}
-            
-          />
+          
            <RootStack.Screen
             name="Entity Selection"
             component={Entityselections}
@@ -57,8 +58,8 @@ function App() {
             options={{headerShown: false}}
             />
              <RootStack.Screen
-            name="Entity Total"
-            component={EntityTotal}
+            name="Owner Collection"
+            component={OwnerCollection}
             options={{headerShown: false}}
             />
               <RootStack.Screen
@@ -66,12 +67,17 @@ function App() {
                 component={RegisterScreen}
                 options={{headerShown: false}}
       />
+       {/* <RootStack.Screen
+                name="Profile Screen"
+                component={profile}
+                options={{headerShown: false}}
+      /> */}
       <RootStack.Screen
                 name="Submit"
                 component={Submit}
                 options={{headerShown: false}}
       />
-       <RootStack.Screen
+       {/* <RootStack.Screen
              
             name="Add Owner"
             component={Addowner}
@@ -82,23 +88,53 @@ function App() {
              name="Add bus"
              component={Addbus}
              
-           />
+           /> */}
            <RootStack.Screen
+                              options={{headerShown: false}}
+
+             name="Tyre collection"
+             component={Tyrecollection}
              
-             name="Add category"
-             component={AddCategory}
+           />
+             <RootStack.Screen
+                              options={{headerShown: false}}
+
+             name="Tax Collection"
+             component={TaxCollection}
              
            />
                <RootStack.Screen
              
-             name="Add collector"
-             component={AddCollector}
+             name="Manage Settings"
+             component={Settings}
+             options={{ 
+             headerTitle : 'Manage User',
+  
+      }}
              
            />
            <RootStack.Screen
                  options={{headerShown: false}}
-             name="collection"
-             component={Collection}
+             name="Stand fee"
+             component={Standfee}
+             
+           />
+           <RootStack.Screen
+                 options={{headerShown: false}}
+             name="Temporory fee"
+             component={Tempororyfee}
+             
+           />
+                <RootStack.Screen
+                 options={{headerShown: false}}
+             name="home"
+             component={Home}
+             
+           />
+            <RootStack.Screen
+                 options={{headerShown: false}}
+             name="admin"
+             component={Admin}
              
            />
         </RootStack.Navigator>

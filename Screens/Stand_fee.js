@@ -2,41 +2,30 @@ import React,{useEffect,useState,useRef} from 'react';
 import { Text, View,TextInput,StyleSheet,TouchableOpacity,ScrollView,Image,FlatList,Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Iconb from 'react-native-vector-icons/MaterialCommunityIcons';
-import {queryallbus,deletebus,buscollectionquery} from './model/modalschema';
-import Addbus from './addbus';
+import {busstandfeequery} from './model/modalschema';
+import Addowner from './addowner';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const HEADER_HEIGHT = 200;
+const HEADER_HEIGHT = 150;
 
 export default function App({navigation}) {
   const offset = useRef(new Animated.Value(0)).current;
   const [bus, setBus] = useState([]);
-  const [modelopen, setModelopen] = useState(false);
   const [sum, setSum] = useState(0);
   const [tempSum, setTempSum] = useState(0);
-
+  const [modelopen, setModelopen] = useState(false);
   useEffect(() => {
          getdata()
           }, []);
           async function getdata(){
-           let data = await buscollectionquery()
-           setSum(data.sum)
-           setBus(data.data)
-           setTempSum(data.tempvehiclesum)
-
-          }
-
-          function deleting(data){
-            deletebus(data)
-            .then(docs=>{
-              setModelopen(false)
-        
-            })
-            .catch(err => alert(`Some error occured`));
-        
+            let data = await busstandfeequery()
+            setSum(data.sum)
+            setBus(data.data)
+            setTempSum(data.tempvehiclesum)
+ 
           }
   return (
     <SafeAreaProvider>
@@ -61,7 +50,7 @@ onPress={() => { navigation.goBack() }}>
 </View>
 <View style={{ padding:25,}}>
 <Text style={[styles.textb,{fontWeight:'bold'}]}>
-Buses and Collection
+OwnersFee Collection
 </Text>
 </View>
 
@@ -88,14 +77,14 @@ padding:20,
 </View>
 
       <SafeAreaView style={{ flex: 1 ,backgroundColor:'#253B8A'}} forceInset={{ top: 'always' }}>
-      <Addbus modalopen={modelopen} navigation={navigation} setModelopen={setModelopen} />
+      <Addowner modalopen={modelopen} navigation={navigation} setModelopen={setModelopen} />
     
-        <AnimatedHeader animatedValue={offset} navigation={navigation} setModelopen={setModelopen} sum={sum}/>
+        <AnimatedHeader animatedValue={offset} navigation={navigation} setModelopen={setModelopen} sum={sum} />
         <ScrollView
           style={{ flex: 1, backgroundColor: 'white', }}
           contentContainerStyle={{
             alignItems: 'center',
-            paddingTop: 220,
+            paddingTop: 170,
             paddingHorizontal: 20
           }}
           showsVerticalScrollIndicator={false}
@@ -177,7 +166,7 @@ const styles = StyleSheet.create({
 
       },
        button: {
-         width:'95%',height:120,backgroundColor:'#F9F8FF',justifyContent:'center',alignItems:'center',
+         width:'90%',height:120,backgroundColor:'#F9F8FF',justifyContent:'center',alignItems:'center',
          padding:20,
          flexDirection:'row',justifyContent:'space-between',
          borderRadius:16,
@@ -231,16 +220,7 @@ From 12/12/2022 To 12/01/2023
           <Text style={[styles.text,{fontWeight:'bold',fontSize:25,marginTop:5}]}>
           ₹ {sum}
           </Text> 
-          <TouchableOpacity style={{justifyContent:'center',alignItems:'center',height:70,backgroundColor:'#3A8885',width:70,borderRadius:50,}}
-     onPress={()=>setModelopen(true)}> 
-    
-     <Iconb
-                                name={'plus'}
-                                size={40}
-                                color={'#fff'}
-                           
-                            />
-     </TouchableOpacity>
+     
           </View>
          
       

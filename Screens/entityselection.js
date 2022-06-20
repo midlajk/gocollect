@@ -1,135 +1,104 @@
-import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator,StyleSheet,TouchableOpacity } from 'react-native';
-import { ListItem, SearchBar } from 'react-native-elements';
+import React,{useState,useEffect,useRef} from 'react';
+import { Text, View,TextInput,StyleSheet,TouchableOpacity,ScrollView,FlatList } from 'react-native';
+import SearchBar from "react-native-dynamic-search-bar";
+import {queryallbus} from './model/modalschema';
 
-class FlatListDemo extends Component {
-  constructor(props) {
-    super(props);
+export default function TrackScreen({navigation,route}) {
+   const [list, setList] = useState([]);
 
-    this.state = {
-      loading: false,
-      data: [{title:'KL 12 B 1212',Name:'N M S'},{title:'KL 12 B 121',Name:'N M K'},{title:'KL 12 B 221',Name:'NIZZAMUDDIN'},{title:'KL 12 C 121',Name:'FANTASTIC'}],
-      error: null,
-    };
-
-    this.arrayholder = [];
-  }
-
+  const [searchText, setSearchText] = useState('');
  
 
-//   makeRemoteRequest = () => {
-//     const url = `https://randomuser.me/api/?&results=20`;
-//     this.setState({ loading: true });
+  useEffect(() => {
 
-//     fetch(url)
-//       .then(res => res.json())
-//       .then(res => {
-//         this.setState({
-//           data: res.results,
-//           error: res.error || null,
-//           loading: false,
-//         });
-//         this.arrayholder = res.results;
-//       })
-//       .catch(error => {
-//         this.setState({ error, loading: false });
-//       });
-//   };
+    getdata()
 
-  renderSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: '86%',
-          backgroundColor: '#CED0CE',
-          marginLeft: '14%',
-        }}
-      />
-    );
-  };
+  }, [1]);
+  async function getdata(){
+    let letdata = await queryallbus()
+    setList(letdata)
+   } 
 
-  searchFilterFunction = text => {
-    this.setState({
-      value: text,
-    });
+        
 
-    const newData = this.arrayholder.filter(item => {
-      const itemData = `${item.name.title.toUpperCase()} ${item.name.first.toUpperCase()} ${item.name.last.toUpperCase()}`;
-      const textData = text.toUpperCase();
 
-      return itemData.indexOf(textData) > -1;
-    });
-    this.setState({
-      data: newData,
-    });
-  };
+  //Data can be coming from props or any other source as well
+  const data = list
+  const filteredData = searchText ? data.filter(x =>
+    x.number.toLowerCase().includes(searchText.toLowerCase())||x.assignee[0].name.toLowerCase().includes(searchText.toLowerCase())
+    ): data
+    
 
-  renderHeader = () => {
-    return (
+  return (
+    <View style={{flex:1,}}>
       <SearchBar
-        placeholder="Type Here..."
-        lightTheme
-        round
-        onChangeText={text => this.searchFilterFunction(text)}
-        autoCorrect={false}
-        value={this.state.value}
-        icon='false'
+  fontColor="#c6c6c6"
+  iconColor="#c6c6c6"
+  style={{marginTop:10}}
+  shadowColor="#282828"
+  cancelIconColor="#c6c6c6"
+  placeholder="Search here"
+  autoFocus
+  onChangeText={(text) => setSearchText(text)}
+  onPress={() => alert("onPress")}
+/>
+        
+          
+          <View style={{ flex: 1, justifyContent: 'center',marginTop:10}}>
 
-      />
-    );
-  };
+                <FlatList
+                data={filteredData}
+                renderItem={({ item }) => (
 
-  render() {
-    if (this.state.loading) {
-      return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator />
-        </View>
-      );
-    }
-    return (
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.state.data}
-          renderItem={({ item }) => (
-            <View style={styles.shadow}>
-            <TouchableOpacity style={styles.button}
-                     onPress={() => {
-                        /* 1. Navigate to the Details route with params */
-                        this.props.navigation.navigate('Home Tabs', {
-                          itemId: item.title,
-                        });
-                      }}
+                <View style={styles.shadow}>
+               <TouchableOpacity style={styles.button}
+              onPress={()=>navigation.navigate('home',{bus:item.number,name:item.name,owner:item.assignee[0].name})}
               >
-            <View>
-                <Text style={styles.text}>{item.title}</Text>
-                <Text >{item.Name}</Text>
-           
-                </View>
-                </TouchableOpacity>
-                </View>
-          )}
-          keyExtractor={item => item.title}
-          ItemSeparatorComponent={this.renderSeparator}
-          ListHeaderComponent={this.renderHeader}
-        />
-      </View>
-    );
-  }
-}
+        
+            
+                    <View style={{flex:1,alignItems:'center'}}>
+         
+                  
 
-export default FlatListDemo;
+                      <Text style={styles.text}>{item.number}</Text>
+                      <Text style={{fontSize:16,color:'#000'}}>{item.name}</Text>
+                      <Text style={{fontSize:16,color:'#000'}}>{item.assignee[0].name}</Text>
+
+                     
+                      
+                      
+                        
+                        </View>
+              
+               </TouchableOpacity>
+              </View>
+                )}
+                keyExtractor={(item, id) => id.toString()}/>
+    
+
+  </View>
+  
+    
+  </View>
+  );
+       }
+
+
 const styles = StyleSheet.create({
    
     text: {
          color:'#000',
-         fontSize:16,
-
+         fontSize:14,
+      
        },
+       textb: {
+        color:'#fff',
+        fontSize:16,
+     
+      },
        button: {
-         width:'90%',height:80,backgroundColor:'#fff',justifyContent:'center',alignItems:'center',
-         padding:20,
+         width:'90%',borderRadius:16,backgroundColor:'#fff',justifyContent:'center',alignItems:'center',
+         padding:10,
          flexDirection:'row',justifyContent:'space-between',
          shadowColor:'#000',
             shadowOffset:{
@@ -138,7 +107,7 @@ const styles = StyleSheet.create({
             },
             shadowOpacity:0.25,
             shadowRadius:3.5,
-            elevation:3,
+            elevation:6,
         },
         shadow:{
             

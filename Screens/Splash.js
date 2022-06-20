@@ -12,10 +12,20 @@ export default function Splash({ navigation }) {
     useEffect(() => {
         
         setTimeout(() => {
-            AsyncStorage.getItem('user_id').then((value) =>
-            navigation.replace(
-              value === null ? 'RegisterScreen' : 'Home Tabs'
-            ),
+            AsyncStorage.getItem('user').then((value) =>
+             {
+                 if(value){
+                AsyncStorage.getItem('usertype').then((va) =>   navigation.replace(
+              va === 'admin' ? 'admin' : 'home'
+            ,{bus:'',name:'',owner:''}),
+            )
+
+            }else{
+                navigation.replace('RegisterScreen')
+            }
+     
+    }
+            
           );
         }, 2000);
     }, []);
@@ -26,7 +36,7 @@ export default function Splash({ navigation }) {
         <View style={styles.body} >
             <Image
                 style={styles.logo}
-                source={require('../assets/collect.png')}
+                source={require('../assets/ownerslogo.jpeg')}
             />
             <Text
                 style={[
@@ -34,7 +44,7 @@ export default function Splash({ navigation }) {
                     styles.text
                 ]}
             >
-                Go Collect
+                AKBOA KONDOTTY
             </Text>
         </View>
     )

@@ -14,12 +14,10 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import Loader from './loader';
 
 const RegisterScreen = ({navigation}) => {
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
 
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,63 +27,68 @@ const RegisterScreen = ({navigation}) => {
     setIsRegistraionSuccess
   ] = useState(false);
 
-  const emailInputRef = createRef();
-  const ageInputRef = createRef();
+
 
   const passwordInputRef = createRef();
 
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
 
     setErrortext('');
-    if (!userName) {
-      alert('Please fill Name');
-      return;
-    }
-    if (!userEmail) {
-      alert('Please fill Email');
-      return;
-    }
+   
 
     if (!userPassword) {
       alert('Please fill Password');
       return;
+    }else{
+      await AsyncStorage.getItem('Admin').then(async (res) => {
+        if(res){
+        if(res==userPassword){
+          await AsyncStorage.setItem('user', userPassword);
+          await AsyncStorage.setItem('usertype', 'admin');
+
+          navigation.navigate('admin')
+        }else{
+          await AsyncStorage.getItem('Collector').then(async (re) => {
+            if(re){
+               if(re==userPassword){
+                await AsyncStorage.setItem('user', userPassword);
+                await AsyncStorage.setItem('usertype', 'user');
+                navigation.navigate('home',{bus:'',name:'',owner:''})
+
+
+
+            }else{
+
+              alert('Wrong password');
+
+            }
+            }else{
+
+              alert('Wrong password/No collector registered');
+            }
+           
+          })
+        }
+        
+        }else{
+          await AsyncStorage.setItem('Admin', userPassword);
+          await AsyncStorage.setItem('user', userPassword);
+          await AsyncStorage.setItem('usertype', 'admin');
+
+          navigation.navigate('admin')
+
+        }  
+        })
+
+}
+
     }
-    //Show Loader
-    setLoading(true);
-   
-    setIsRegistraionSuccess(true);
-   
-  };
-  if (isRegistraionSuccess) {
-
-
-
-            setTimeout(() => {
-                navigation.replace('Home Tabs');
-            }, 2000);
   
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-          justifyContent: 'center',
-        }}>
-        <Image
-          source={require('../assets/check.png')}
-          style={{
-            height: 150,
-            resizeMode: 'contain',
-            alignSelf: 'center'
-          }}
-        />
-        <Text style={styles.successTextStyle}>
-          Registration Successful
-        </Text>
-       
-      </View>
-    );
-  }
+
+   
+  
+
+  
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <Loader loading={loading} />
@@ -95,11 +98,11 @@ const RegisterScreen = ({navigation}) => {
         contentContainerStyle={{
           justifyContent: 'center',
           alignContent: 'center',
-          marginTop:'20%'
+          marginTop:'40%'
         }}>
         <View style={{alignItems: 'center'}}>
           <Image
-            source={require('../assets/collect.png')}
+            source={require('../assets/ownerslogo.jpeg')}
             style={{
               width: '50%',
               height: 100,
@@ -107,41 +110,10 @@ const RegisterScreen = ({navigation}) => {
               margin: 30,
             }}
           />
-          <Text>Collection App Admin Registration</Text>
+          <Text>App Registration/Login</Text>
         </View>
         <KeyboardAvoidingView enabled>
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              onChangeText={(UserName) => setUserName(UserName)}
-              underlineColorAndroid="#f000"
-              placeholder="Enter Organization Or Company Name"
-              placeholderTextColor="#8b9cb5"
-              autoCapitalize="sentences"
-              returnKeyType="next"
-              onSubmitEditing={() =>
-                emailInputRef.current && emailInputRef.current.focus()
-              }
-              blurOnSubmit={false}
-            />
-          </View>
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              onChangeText={(UserEmail) => setUserEmail(UserEmail)}
-              underlineColorAndroid="#f000"
-              placeholder="Enter Admin User Name"
-              placeholderTextColor="#8b9cb5"
-              keyboardType="email-address"
-              ref={emailInputRef}
-              returnKeyType="next"
-              onSubmitEditing={() =>
-                passwordInputRef.current &&
-                passwordInputRef.current.focus()
-              }
-              blurOnSubmit={false}
-            />
-          </View>
+    
           <View style={styles.SectionStyle}>
             <TextInput
               style={styles.inputStyle}
@@ -167,15 +139,14 @@ const RegisterScreen = ({navigation}) => {
             style={styles.buttonStyle}
             activeOpacity={0.5}
             onPress={handleSubmitButton}>
-            <Text style={styles.buttonTextStyle}>REGISTER</Text>
+            <Text style={styles.buttonTextStyle}>LOGIN</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>
 
-        <Text style={{margin:20,textAlign:'center'}}> Register your company or Organization to continue using the app</Text>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 export default RegisterScreen;
 
 const styles = StyleSheet.create({
@@ -188,10 +159,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: '#7DE24E',
+    backgroundColor: '#253b8a',
     borderWidth: 0,
     color: '#FFFFFF',
-    borderColor: '#7DE24E',
+    borderColor: '#253b8a',
     height: 50,
     justifyContent:'center',
     alignItems: 'center',

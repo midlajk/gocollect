@@ -2,8 +2,8 @@ import React,{useEffect,useState,useRef} from 'react';
 import { Text, View,TextInput,StyleSheet,TouchableOpacity,ScrollView,Image,FlatList,Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Iconb from 'react-native-vector-icons/MaterialCommunityIcons';
-import {queryallbus,deletebus,buscollectionquery} from './model/modalschema';
-import Addbus from './addbus';
+import {queryallowner,deleteowner,ownercollectionquery} from './model/modalschema';
+import Addowner from './addowner';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,24 +13,22 @@ const HEADER_HEIGHT = 200;
 
 export default function App({navigation}) {
   const offset = useRef(new Animated.Value(0)).current;
-  const [bus, setBus] = useState([]);
+  const [owner, setOwner] = useState([]);
   const [modelopen, setModelopen] = useState(false);
-  const [sum, setSum] = useState(0);
   const [tempSum, setTempSum] = useState(0);
+  const [sum, setSum] = useState(0);
 
   useEffect(() => {
          getdata()
           }, []);
           async function getdata(){
-           let data = await buscollectionquery()
-           setSum(data.sum)
-           setBus(data.data)
-           setTempSum(data.tempvehiclesum)
-
+            let data = await ownercollectionquery()
+            setSum(data.sum)
+            setOwner(data.data)
+            setTempSum(data.tempvehiclesum)
           }
-
           function deleting(data){
-            deletebus(data)
+            deleteowner(data)
             .then(docs=>{
               setModelopen(false)
         
@@ -61,7 +59,7 @@ onPress={() => { navigation.goBack() }}>
 </View>
 <View style={{ padding:25,}}>
 <Text style={[styles.textb,{fontWeight:'bold'}]}>
-Buses and Collection
+Owners and Collection
 </Text>
 </View>
 
@@ -88,9 +86,9 @@ padding:20,
 </View>
 
       <SafeAreaView style={{ flex: 1 ,backgroundColor:'#253B8A'}} forceInset={{ top: 'always' }}>
-      <Addbus modalopen={modelopen} navigation={navigation} setModelopen={setModelopen} />
+      <Addowner modalopen={modelopen} navigation={navigation} setModelopen={setModelopen} />
     
-        <AnimatedHeader animatedValue={offset} navigation={navigation} setModelopen={setModelopen} sum={sum}/>
+        <AnimatedHeader animatedValue={offset} navigation={navigation} setModelopen={setModelopen} sum={sum} />
         <ScrollView
           style={{ flex: 1, backgroundColor: 'white', }}
           contentContainerStyle={{
@@ -105,22 +103,23 @@ padding:20,
             { useNativeDriver: false }
           )}
         >
-          {bus.map((item,index) => (
+          {owner.map((item,index) => (
             <View style={styles.shadow} key={index}>
-               <View style={styles.button}>
+               <View style={styles.button}
+                onPress={() => { navigation.navigate('Owner Collection') }}>
             
             
             <View style={{width:150}}>
                 <Text style={[styles.text,{color:'#007FC4'}]}>{item.name}</Text>
-                <Text >{item.number}</Text>
+                <Text >{item.place}</Text>
                 <Text >{item.phone}</Text>
-                <Text >{item.assignee[0].name}</Text>
+            
                 </View>
             <View>
                 
             </View>
                   <Text style={[styles.text,{color:'#2d387a',fontWeight:'bold'}]}>₹ {item.sum}</Text>
-                  <TouchableOpacity onPress={()=>{deleting(item.number)}}>
+                  <TouchableOpacity onPress={()=>{deleting(item.name)}}>
                           <Iconb
                   
                                             name={'delete'}
@@ -133,7 +132,7 @@ padding:20,
             </View>
              </View>
           ))}
-             <View style={[styles.button,{margin:5}]}>
+            <View style={[styles.button,{margin:5}]}>
             
             
             <View style={{width:150}}>
@@ -146,7 +145,7 @@ padding:20,
             </View>
                   <Text style={[styles.text,{color:'#2d387a',fontWeight:'bold'}]}>₹ {tempSum}</Text>
                   
-                  <TouchableOpacity onPress={()=>{deleting(item.number)}}>
+                  <TouchableOpacity >
                           <Iconb
                   
                                             name={'delete'}

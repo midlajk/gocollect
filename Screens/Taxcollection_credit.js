@@ -2,41 +2,25 @@ import React,{useEffect,useState,useRef} from 'react';
 import { Text, View,TextInput,StyleSheet,TouchableOpacity,ScrollView,Image,FlatList,Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Iconb from 'react-native-vector-icons/MaterialCommunityIcons';
-import {queryallbus,deletebus,buscollectionquery} from './model/modalschema';
-import Addbus from './addbus';
+import {queryallbus} from './model/modalschema';
+import Addowner from './addowner';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const HEADER_HEIGHT = 200;
+const HEADER_HEIGHT = 130;
 
 export default function App({navigation}) {
   const offset = useRef(new Animated.Value(0)).current;
   const [bus, setBus] = useState([]);
   const [modelopen, setModelopen] = useState(false);
-  const [sum, setSum] = useState(0);
-  const [tempSum, setTempSum] = useState(0);
-
   useEffect(() => {
          getdata()
           }, []);
           async function getdata(){
-           let data = await buscollectionquery()
-           setSum(data.sum)
-           setBus(data.data)
-           setTempSum(data.tempvehiclesum)
-
-          }
-
-          function deleting(data){
-            deletebus(data)
-            .then(docs=>{
-              setModelopen(false)
-        
-            })
-            .catch(err => alert(`Some error occured`));
-        
+           let letdata = await queryallbus()
+           setBus(letdata)
           }
   return (
     <SafeAreaProvider>
@@ -48,7 +32,7 @@ style={{
 padding:20,
 flex:1
 }}
-onPress={() => { navigation.goBack() }}> 
+onPress={() => { navigation.navigate('admin') }}> 
 <Icon
                name={'arrow-back'}
                size={30}
@@ -61,7 +45,7 @@ onPress={() => { navigation.goBack() }}>
 </View>
 <View style={{ padding:25,}}>
 <Text style={[styles.textb,{fontWeight:'bold'}]}>
-Buses and Collection
+Tax Collection 
 </Text>
 </View>
 
@@ -88,14 +72,14 @@ padding:20,
 </View>
 
       <SafeAreaView style={{ flex: 1 ,backgroundColor:'#253B8A'}} forceInset={{ top: 'always' }}>
-      <Addbus modalopen={modelopen} navigation={navigation} setModelopen={setModelopen} />
+      <Addowner modalopen={modelopen} navigation={navigation} setModelopen={setModelopen} />
     
-        <AnimatedHeader animatedValue={offset} navigation={navigation} setModelopen={setModelopen} sum={sum}/>
+        <AnimatedHeader animatedValue={offset} navigation={navigation} setModelopen={setModelopen} />
         <ScrollView
           style={{ flex: 1, backgroundColor: 'white', }}
           contentContainerStyle={{
             alignItems: 'center',
-            paddingTop: 220,
+            paddingTop: 150,
             paddingHorizontal: 20
           }}
           showsVerticalScrollIndicator={false}
@@ -106,56 +90,22 @@ padding:20,
           )}
         >
           {bus.map((item,index) => (
-            <View style={styles.shadow} key={index}>
-               <View style={styles.button}>
-            
-            
+            <View style={[styles.shadow,styles.button]} key={index}>
+         
             <View style={{width:150}}>
                 <Text style={[styles.text,{color:'#007FC4'}]}>{item.name}</Text>
                 <Text >{item.number}</Text>
                 <Text >{item.phone}</Text>
-                <Text >{item.assignee[0].name}</Text>
+            
                 </View>
             <View>
                 
             </View>
-                  <Text style={[styles.text,{color:'#2d387a',fontWeight:'bold'}]}>₹ {item.sum}</Text>
-                  <TouchableOpacity onPress={()=>{deleting(item.number)}}>
-                          <Iconb
-                  
-                                            name={'delete'}
-                                            size={40}
-                                            color={'#3A8885'}
-                                       
-                                        />
-                  </TouchableOpacity>
+                  <Text style={[styles.text,{color:'#2d387a',fontWeight:'bold'}]}>₹78</Text>
             
-            </View>
+            
              </View>
           ))}
-             <View style={[styles.button,{margin:5}]}>
-            
-            
-            <View style={{width:150}}>
-                <Text style={[styles.text,{color:'#007FC4'}]}>Temporary Permit</Text>
-                <Text >Owners Fee</Text>
-
-                </View>
-            <View>
-                
-            </View>
-                  <Text style={[styles.text,{color:'#2d387a',fontWeight:'bold'}]}>₹ {tempSum}</Text>
-                  
-                  <TouchableOpacity onPress={()=>{deleting(item.number)}}>
-                          <Iconb
-                  
-                                            name={'delete'}
-                                            size={40}
-                                            color={'#3A8885'}
-                                       
-                                        />
-                  </TouchableOpacity>
-            </View>
         </ScrollView>
        
       </SafeAreaView>
@@ -177,7 +127,7 @@ const styles = StyleSheet.create({
 
       },
        button: {
-         width:'95%',height:120,backgroundColor:'#F9F8FF',justifyContent:'center',alignItems:'center',
+         width:'100%',height:120,backgroundColor:'#F9F8FF',justifyContent:'center',alignItems:'center',
          padding:20,
          flexDirection:'row',justifyContent:'space-between',
          borderRadius:16,
@@ -198,7 +148,7 @@ const styles = StyleSheet.create({
    
   })
 
-  const AnimatedHeader = ({ animatedValue,navigation,setModelopen,sum }) => {
+  const AnimatedHeader = ({ animatedValue,navigation,setModelopen }) => {
     const insets = useSafeAreaInsets();
 
     const headerHeight = animatedValue.interpolate({
@@ -222,25 +172,18 @@ const styles = StyleSheet.create({
         }}
       >
         <View style={{alignItems:'center',justifyContent:'center'}}>
-          <Text style={[styles.text,{fontWeight:'bold',fontSize:20}]}>
-Total amount collected
-          </Text>
-          <Text style={[styles.textb,{marginTop:10}]}>
+        <Text style={[styles.textb,{marginTop:10}]}>
 From 12/12/2022 To 12/01/2023     
 </Text>
-          <Text style={[styles.text,{fontWeight:'bold',fontSize:25,marginTop:5}]}>
-          ₹ {sum}
+
+          
+          <Text style={[styles.text,{fontWeight:'bold',fontSize:18,color:'#7BB6B3'}]}>
+Total Amount Collected
+          </Text>
+        
+          <Text style={[styles.text,{fontWeight:'bold',fontSize:18,marginTop:5,color:'#7BB6B3'}]}>
+          ₹ 343443
           </Text> 
-          <TouchableOpacity style={{justifyContent:'center',alignItems:'center',height:70,backgroundColor:'#3A8885',width:70,borderRadius:50,}}
-     onPress={()=>setModelopen(true)}> 
-    
-     <Iconb
-                                name={'plus'}
-                                size={40}
-                                color={'#fff'}
-                           
-                            />
-     </TouchableOpacity>
           </View>
          
       
