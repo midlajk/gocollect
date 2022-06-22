@@ -28,7 +28,6 @@ export default function AppCategoryScreen({route,navigation}) {
   const [taxcollection, settaxcollection] = useState(0);
   const [subimit, setSubmit] = useState(0);
 
-console.log(route.params.bus)
   useEffect(() => {
     setBus(route.params.bus)
     setOwner(route.params.owner)

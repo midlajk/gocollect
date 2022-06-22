@@ -1,5 +1,4 @@
 import Realm from 'realm';
-import { startOfDay, endOfDay } from 'date-fns';
 
 export const Owner_Schema = {
   name: 'Owner_Schema',
@@ -302,7 +301,6 @@ export const filterTodoLists = searchedText =>
           let ownersfee = allcollection.filtered("c_name == 'Owners fee'").sum('c_amount');
           let Tyrecost = allcollection.filtered("c_name == 'Tyre Collection'").sum('c_amount');
           let Taxcollection = allcollection.filtered("c_name == 'Tax Collection'").sum('c_amount');
-          console.log(ownersfee)
           var data = {
             total:total,
             ownersfee:ownersfee,
@@ -423,7 +421,6 @@ new Promise((resolve, reject) => {
         enddate.setMinutes(enddate.getMinutes() + 30);
          let allbus = realm.objects('Bus_Schema')
         let allcollection = realm.objects('Collection').filtered('c_date >= $0 && c_date <= $1 AND c_name == "Owners fee"', startdate, enddate)
-        console.log(allcollection)
         let sum = allcollection.sum('c_amount');
         let tempvehiclesum = realm.objects('Collection').filtered('c_date >= $0 && c_date <= $1 AND c_vehicle CONTAINS "TEMP"', startdate, enddate).sum('c_amount')
         var buswithsum = [];

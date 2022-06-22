@@ -1,6 +1,6 @@
 import React,{useState,useEffect,useRef} from 'react';
 import { Text, View,TextInput,StyleSheet,TouchableOpacity,ScrollView,FlatList } from 'react-native';
-import SearchBar from "react-native-dynamic-search-bar";
+import { Searchbar } from 'react-native-paper';
 import {queryallbus} from './model/modalschema';
 
 export default function TrackScreen({navigation,route}) {
@@ -31,10 +31,10 @@ export default function TrackScreen({navigation,route}) {
 
   return (
     <View style={{flex:1,}}>
-      <SearchBar
+      <Searchbar
   fontColor="#c6c6c6"
   iconColor="#c6c6c6"
-  style={{marginTop:10}}
+  style={{margin:10,}}
   shadowColor="#282828"
   cancelIconColor="#c6c6c6"
   placeholder="Search here"

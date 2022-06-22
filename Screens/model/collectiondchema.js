@@ -68,7 +68,6 @@ export const deleteAllTodoLists = () =>
         realm.write(() => {
           let allTodoLists = realm.objects('Owner_Schema');
           realm.delete(allTodoLists);
-          console.log(allTodoLists)
         });
       })
       .catch(error => console.log(err));
